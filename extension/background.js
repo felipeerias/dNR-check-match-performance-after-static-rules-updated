@@ -1,4 +1,5 @@
-var NUM_RULES = 20000;
+const NUM_RULES = 20000;
+const NUM_ITERATIONS = 200;
 
 function getAverageAfterRemovingOutliers(arr) {
   const average = (arr) => arr.reduce((p, c) => p + c, 0) / arr.length;
@@ -60,7 +61,7 @@ function checkTestMatchOutcomePerformance(resolve) {
 
               expectNoMatch(test_urls[2], result);
 
-              if (test_context.iteration >= 100) {
+              if (test_context.iteration >= 200) {
                 test_context.index += 1;
                 new Promise(startTest);
               } else {
@@ -106,7 +107,7 @@ function startTest(resolve) {
       option.enableRuleIds = Array.from({ length: NUM_RULES }, (_, i) => i + 1);
       console.error('Enable all rules');
     } else {
-      option.disableRuleIds = Array.from({ length: disabled_rules_count }, (_, i) => i + 1);
+      option.disableRuleIds = Array.from({ length: disabled_rules_count }, (_, i) => i + 2);
       console.error('Disable ' + disabled_rules_count + ' rules');
     }
 
@@ -114,11 +115,14 @@ function startTest(resolve) {
   }
 }
 
+const STEP = 100;
+var baseArray = Array.from({ length: Math.floor(NUM_RULES / 1000 + 1) }, (_, i) => i * STEP);
+
 var test_context = {
   index: 0,
   iteration: 0,
   disabled_rules_count_list:
-    Array.from({ length: Math.floor(NUM_RULES / 1000 + 1) }, (_, i) => i * 1000),
+    [0, NUM_RULES / 2, 0, NUM_RULES / 2, 0].concat(baseArray),
   results: [[], [], []]
 };
 
